@@ -131,9 +131,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         if (navigator.xr) {
           navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
             vrButton.enabled = supported;
-          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            arButton.enabled = supported;
           });
+
+          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+            xrButton.enabled = supported;
+          })
 
           // Start up an inline session, which should always be supported on
           // browsers that support WebXR regardless of the available hardware.
