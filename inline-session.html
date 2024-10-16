@@ -121,7 +121,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           onEndSession: onEndSession,
           textEnterXRTitle: "START AR",
           textXRNotFoundTitle: "AR NOT FOUND",
-          textExitXRTitle: "EXIT  AR"
+          textExitXRTitle: "EXIT  AR",
         });
 
         document.querySelector('header').appendChild(vrButton.domElement);
@@ -134,7 +134,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           });
 
           navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            xrButton.enabled = supported;
+            arButton.enabled = supported;
           });
 
           // Start up an inline session, which should always be supported on
