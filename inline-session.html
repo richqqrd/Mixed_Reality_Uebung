@@ -96,7 +96,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       fov.addEventListener('change', updateFov);
 
       // XR globals.
-      let xrButton = null;
+      let vrButton = null;
+      let arButton = null;
       let xrImmersiveRefSpace = null;
       let xrInlineRefSpace = null;
 
@@ -107,16 +108,31 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let solarSystem = new Gltf2Node({url: 'media/gltf/space/space.gltf'});
       scene.addNode(solarSystem);
       scene.addNode(new SkyboxNode({url: 'media/textures/milky-way-4k.png'}));
+
+
       function initXR() {
-        xrButton = new WebXRButton({
-          onRequestSession: onRequestSession,
+        vrButton = new WebXRButton({
+          onRequestSession: onRequestSessionVr,
           onEndSession: onEndSession
         });
-        document.querySelector('header').appendChild(xrButton.domElement);
+
+        arButton = new WebXRButton({
+          onRequestSession: onRequestSessionAr,
+          onEndSession: onEndSession,
+          textEnterXRTitle: "START AR",
+          textXRNotFoundTitle: "AR NOT FOUND",
+          textExitXRTitle: "EXIT  AR",
+        })
+
+        document.querySelector('header').appendChild(vrButton.domElement);
+        document.querySelector('header').appendChild(arButton.domElement);
+
 
         if (navigator.xr) {
           navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
-            xrButton.enabled = supported;
+            vrButton.enabled = supported;
+          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+            arButton.enabled = supported;
           });
 
           // Start up an inline session, which should always be supported on
@@ -129,14 +145,23 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
 
-      function onRequestSession() {
+      function onRequestSessionVr() {
         return navigator.xr.requestSession('immersive-vr').then((session) => {
-          xrButton.setSession(session);
+          vrButton.setSession(session);
           // Set a flag on the session so we can differentiate it from the
           // inline session.
           session.isImmersive = true;
           onSessionStarted(session);
         });
+      }
+
+      function onRequestSessionAr(){
+        return navigator.xr.requestSession('immersive-ar')
+            .then((session) => {
+              arButton.setSession(session);
+              session.isImmersive = true;
+              onSessionStarted(session);
+            });
       }
 
       function onSessionStarted(session) {
@@ -201,7 +226,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function onSessionEnded(event) {
         // Only reset the button when the immersive session ends.
         if (event.session.isImmersive) {
-          xrButton.setSession(null);
+          vrButton.setSession(null);
+          arButton.setSession(null);
         }
       }
 
